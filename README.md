@@ -1,4 +1,4 @@
-# Synergistic Interaction Modeling
+# Synergistic Interaction Modeling (Beta, Exact Rejection Sampling for variance parameters)
 Implements the Synergistic Interaction Modeling (SIM) framework.
 
 # Abstract
