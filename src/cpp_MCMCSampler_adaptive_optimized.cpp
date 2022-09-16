@@ -32,8 +32,10 @@ Rcpp::List rejection_sampler(arma::mat X1,
   penalty_stor(0) = -1;                 //First element, to be discarded later
   arma::vec mean_vec(M, fill::zeros);
   
-  arma::mat C1 = delta_sq * tau1sq * cov1;
-  arma::mat C2 = delta_sq * tau2sq * cov2;
+  arma::mat C11 = delta_sq * tau1sq * cov1;
+  arma::mat C12 = delta_sq * tau1sq * cov2;
+  arma::mat C21 = delta_sq * tau2sq * cov1;
+  arma::mat C22 = delta_sq * tau2sq * cov2;
   
   mask = 0;                           //Define mask variable for rejection sampling
   
@@ -42,10 +44,10 @@ Rcpp::List rejection_sampler(arma::mat X1,
   
   while((mask == 0) & (rej_len <= 1000)){
     
-    arma::vec theta1 = mvnrnd(mean_vec, C1, 1);
-    arma::vec theta2 = mvnrnd(mean_vec, C1, 1);
-    arma::vec phi1 = mvnrnd(mean_vec, C2, 1);
-    arma::vec phi2 = mvnrnd(mean_vec, C2, 1);
+    arma::vec theta1 = mvnrnd(mean_vec, C11, 1);
+    arma::vec theta2 = mvnrnd(mean_vec, C21, 1);
+    arma::vec phi1 = mvnrnd(mean_vec, C12, 1);
+    arma::vec phi2 = mvnrnd(mean_vec, C22, 1);
     
     arma::vec Pfn1 = square(X1 * theta1);
     arma::vec Pfn2 = square(X2 * phi1);
@@ -216,8 +218,8 @@ double pot_MALA(arma::vec R,
     (pot_rej) +                                               //PE from rejected samples for kappa
     ((2 * M * rej_len * logtau1) - (logtau1 - log(1 + tau1sq))) +       //PE from p(tau1^2), rejected samples
     ((2 * M * rej_len * logtau2) - (logtau2 - log(1 + tau2sq))) +       //PE from p(tau2^2), rejected samples
-    (QF13 / (tau1sq * delta_sq)) +                                     //PE from p(rej_1, rej_3), rejected samples
-    (QF24 / (tau2sq * delta_sq));                                    //PE from p(rej_2, rej_4), rejected samples
+    (0.5*QF13 / (tau1sq * delta_sq)) +                                     //PE from p(rej_1, rej_3), rejected samples
+    (0.5*QF24 / (tau2sq * delta_sq));                                    //PE from p(rej_2, rej_4), rejected samples
       
   double pot_total = pot_lik + pot_prior;
   
@@ -883,8 +885,8 @@ Rcpp::List SIDsampler_draws_adaptive_optimized(arma::vec y,
           
           //Store qf/tau^2
           
-          qf_stor_int(k,0) = (c_1k + QF13_stor(k)) / IE_scale_tausq1(m,k);
-          qf_stor_int(k,1) = (c_2k + QF24_stor(k)) / IE_scale_tausq2(m,k);
+          qf_stor_int(k,0) = (c_1k + (0.5*QF13_stor(k))) / IE_scale_tausq1(m,k);
+          qf_stor_int(k,1) = (c_2k + (0.5*QF24_stor(k))) / IE_scale_tausq2(m,k);
           
         }
         
@@ -1076,9 +1078,6 @@ Rcpp::List SIDsampler_draws_adaptive_optimized(arma::vec y,
           QF24_stor(k) = rej_pen_obj["QF24"];
           rej_len_stor(k) = rej_pen_obj["rej_len"];
           
-          // Rcpp::Rcout << "Fine till here"<< std::endl;
-          // Rcpp::Rcout << rej_pen_stor << std::endl;
-          
           /////////// Sample parameters for interaction k
           
           arma::vec R_IE_k = y - ((ME_mat * sampler_ME) + (all_interaction_sum_notk));
@@ -1228,6 +1227,8 @@ Rcpp::List SIDsampler_draws_adaptive_optimized(arma::vec y,
         
       }
       
+      // Rcpp::Rcout << rej_len_stor << std::endl;
+      
       //Sample \lambda_j = scale of \beta_j in ME ####
       
       arma::vec qf_stor(p, fill::ones);
@@ -1291,8 +1292,8 @@ Rcpp::List SIDsampler_draws_adaptive_optimized(arma::vec y,
           
           //Store qf/tau^2
           
-          qf_stor_int(k,0) = (c_1k + QF13_stor(k)) / IE_scale_tausq1(m,k);
-          qf_stor_int(k,1) = (c_2k + QF24_stor(k)) / IE_scale_tausq2(m,k);
+          qf_stor_int(k,0) = (c_1k + (0.5*QF13_stor(k))) / IE_scale_tausq1(m,k);
+          qf_stor_int(k,1) = (c_2k + (0.5*QF24_stor(k))) / IE_scale_tausq2(m,k);
           
         }
         
@@ -1304,6 +1305,7 @@ Rcpp::List SIDsampler_draws_adaptive_optimized(arma::vec y,
       double deltasq_rate = (accu(qf_stor_int)) + (1/IE_scale_nu(m-1));
       
       IE_scale_deltasq(m) = deltasq_rate / random_gamma(deltasq_shape);
+      //IE_scale_deltasq(m) = 1.0;
       IE_scale_nu(m) = (1 + (1/IE_scale_deltasq(m))) / random_gamma(1.0);
       
       // Sample error variance
