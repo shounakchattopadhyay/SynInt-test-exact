@@ -1,24 +1,24 @@
-\name{SynIntTest-package}
-\alias{SynIntTest-package}
-\alias{SynIntTest}
+\name{SynIntTestExact-package}
+\alias{SynIntTestExact-package}
+\alias{SynIntTestExact}
 \docType{package}
 \title{
-\packageTitle{SynIntTest}
+\packageTitle{SynIntTestExact}
 }
 \description{
-\packageDescription{SynIntTest}
+\packageDescription{SynIntTestExact}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{SynIntTest}
-\packageIndices{SynIntTest}
+\packageDESCRIPTION{SynIntTestExact}
+\packageIndices{SynIntTestExact}
 SIMsampler samples from the posterior distribution of the synergistic interaction model.
 }
 \author{
-\packageAuthor{SynIntTest}
+\packageAuthor{SynIntTestExact}
 
-Maintainer: \packageMaintainer{SynIntTest}
+Maintainer: \packageMaintainer{SynIntTestExact}
 }
 \references{
 [to be added]
