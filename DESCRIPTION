@@ -1,0 +1,11 @@
+Package: SynIntTestExact
+Type: Package
+Title: Synergistic Interaction Modeling
+Version: 1.0
+Date: 2022-01-23
+Author: Shounak Chattopadhyay
+Maintainer: Shounak Chattopadhyay <shounak.chattopadhyay@duke.edu>
+Description: (Beta Version - Exact Sampler) Implements the Synergistic Interaction Modeling framework in Chattopadhyay et al. (2022+).
+License: What license is it under?
+Imports: Rcpp (>= 1.0.7), MASS, splines, splines2, mvtnorm
+LinkingTo: Rcpp, RcppArmadillo
