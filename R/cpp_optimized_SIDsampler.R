@@ -240,15 +240,16 @@ SIMinit<-function(y, X, Z = NULL, ME_list, IE_list, zero_ind, nugget,
   }else
   {
     
+    ## Extract the main effect coefficients ##
+    
+    n = dim(X)[1]
+    p = dim(X)[2]
+    
     ## Extract the intercept ##
     
     RF_intercept = predict(RFmodel, newdata = rep(0, p))
     intercept_est = RF_intercept
     
-    ## Extract the main effect coefficients ##
-    
-    n = dim(X)[1]
-    p = dim(X)[2]
     nspl_ME = dim(ME_list)[2]
     
     ME_coeff_est_mat = matrix(0, nrow = nspl_ME, ncol = p)
